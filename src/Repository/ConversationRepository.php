@@ -3,11 +3,13 @@
 namespace App\Repository;
 
 use App\Entity\Conversation;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<Conversation>
+ * @method User |null getUser()
  */
 class ConversationRepository extends ServiceEntityRepository
 {
@@ -16,28 +18,21 @@ class ConversationRepository extends ServiceEntityRepository
         parent::__construct($registry, Conversation::class);
     }
 
-    //    /**
-    //     * @return Conversation[] Returns an array of Conversation objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('c.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function findByUsers(User $sender, User $recipient)
+    {
+        return $this->createQueryBuilder('c')
+            ->where(':sender MEMBER OF c.users')
+            ->andWhere(':recipient MEMBER OF c.users')
+            ->setParameter('sender', $sender)
+            ->setParameter('recipient', $recipient)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 
-    //    public function findOneBySomeField($value): ?Conversation
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function save(Conversation $conversation): void
+    {
+        $this->getEntityManager()->persist($conversation);
+        $this->getEntityManager()->flush();
+    }
+
 }

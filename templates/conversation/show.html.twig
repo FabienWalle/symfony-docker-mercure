@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Conversation{% endblock %}
+
+{% block body %}
+    {% include 'components/navbar.html.twig' %}
+    <section class="mx-2 mt-2 max-w-4xl p-2 rounded-full shadow-lg">
+        <h1>Messages</h1>
+        <article id="messages" class="overflow-y-auto max-h-[50vh]">
+Liste des messages
+        </article>
+        <hr>
+        <form>
+            <input
+                class="p-2"
+                type="text"
+                   aria-label="Message"
+            name="content"
+            id="content"
+            placeholder="Envoyer un message ...">
+            <input type="hidden" name="conversationId" value="conversation.id">
+            <button class="btn btn-info p-2 text-white font-bold">
+                Envoyer
+            </button>
+        </form>
+    </section>
+{% endblock %}
