@@ -1,0 +1,7 @@
+{
+  "name": "symfony-docker-mercure-boilerplate",
+  "version": "1.0.0",
+  "dependencies": {
+    "bootstrap": "^5.3.5"
+  }
+}

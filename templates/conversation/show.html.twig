@@ -4,24 +4,63 @@
 
 {% block body %}
     {% include 'components/navbar.html.twig' %}
-    <section class="mx-2 mt-2 max-w-4xl p-2 rounded-full shadow-lg">
+    <section class="mx-2 mt-2 max-w-4xl p-2 shadow-lg mx-auto rounded-md">
         <h1>Messages</h1>
-        <article id="messages" class="overflow-y-auto max-h-[50vh]">
-Liste des messages
+        <article
+            id="messages"
+            class="overflow-y-auto max-h-[50vh]"
+            hx-ext="sse"
+            sse-connect="{{ mercure(topic) }}"
+            sse-swap="message"
+        >
+            {% include 'conversation/messages.html.twig' %}
         </article>
         <hr>
-        <form>
+        <form class="w-full flex gap-2" hx-post="{{ path('message.create') }}" hx-swap="none">
             <input
-                class="p-2"
+                class="p-2 flex-1"
                 type="text"
-                   aria-label="Message"
-            name="content"
-            id="content"
-            placeholder="Envoyer un message ...">
-            <input type="hidden" name="conversationId" value="conversation.id">
-            <button class="btn btn-info p-2 text-white font-bold">
+                aria-label="Message"
+                name="content"
+                id="content"
+                placeholder="Envoyer un message ...">
+            <input type="hidden" name="conversationId" value="{{ conversation.id }}">
+            <button class="btn btn-info p-2 text-white font-bold flex-none">
                 Envoyer
             </button>
         </form>
     </section>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        const messages = document.querySelector('#messages');
+        const userId = {{ app.user.id }};
+
+        function scrollToBottom(container) {
+            container.scrollTo({
+                top: container.scrollHeight,
+                behavior: "smooth"
+            })
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            scrollToBottom(messages)
+        });
+        document.body.addEventListener('htmx:sseBeforeMessage', function (e) {
+            e.preventDefault()
+            const json = JSON.parse(e.detail.data);
+            const authorId = json['authorId']
+            const content = json['content']
+
+            if (authorId === userId) {
+                document.querySelector('#content').value = ''
+            }
+
+            htmx.swap('#messages', `<message-element author-id="${authorId}" user-id="${userId}" content="${content}"></message-element>`, {swapStyle: 'beforeend'});
+            scrollToBottom(messages)
+        });
+
+
+    </script>
 {% endblock %}

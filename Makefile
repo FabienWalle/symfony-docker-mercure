@@ -62,3 +62,6 @@ cc: sf
 
 tailwind:
 	php bin/console tailwind:build --watch --poll
+
+data:
+	docker exec -it symfony-docker-mercure-boilerplate-database-1 psql -U app

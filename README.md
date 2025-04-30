@@ -1,3 +1,6 @@
+# Tutorial Symfony Mercure / Real-Time Event
+https://www.youtube.com/watch?v=oyQrh082cBk by Pentiminax
+
 # Symfony Docker
 
 A [Docker](https://www.docker.com/)-based installer and runtime for the [Symfony](https://symfony.com) web framework,
